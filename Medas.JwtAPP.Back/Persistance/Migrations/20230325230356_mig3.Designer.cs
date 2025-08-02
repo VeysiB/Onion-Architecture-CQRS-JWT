@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Medas.JwtAPP.Back.Data.Migrations
+namespace Medas.JwtAPP.Back.Persistance.Migrations
 {
     [DbContext(typeof(JwtContext))]
-    [Migration("20230320125532_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230325230356_mig3")]
+    partial class mig3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -93,6 +93,9 @@ namespace Medas.JwtAPP.Back.Data.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Point")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");

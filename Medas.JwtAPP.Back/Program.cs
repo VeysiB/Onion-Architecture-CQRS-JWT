@@ -1,5 +1,15 @@
+using AutoMapper;
+using Medas.JwtAPP.Back.Core.Application.Interfaces;
+using Medas.JwtAPP.Back.Core.Application.Mapping;
+using Medas.JwtAPP.Back.Infrastructure.Tools;
 using Medas.JwtAPP.Back.Persistance.Context;
+using Medas.JwtAPP.Back.Persistance.Repositories;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
+using System.Text;
 
 namespace Medas.JwtAPP.Back
 {
@@ -11,6 +21,20 @@ namespace Medas.JwtAPP.Back
 
             // Add services to the container.
 
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+                opt.RequireHttpsMetadata = false;
+                opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidAudience =JwtTokenDefaults.ValidAudince,
+                    ValidIssuer = JwtTokenDefaults.ValidIssuer,
+                    ClockSkew = TimeSpan.Zero,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtTokenDefaults.Key)),
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                };
+            });
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -19,7 +43,16 @@ namespace Medas.JwtAPP.Back
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("local"));
             });
-
+            builder.Services.AddScoped(typeof(IRepository<>),typeof(Repository<>));
+            builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+            builder.Services.AddAutoMapper(opt =>
+            {
+                opt.AddProfiles(new List<Profile>()
+                {
+                    new ProductProfile(),
+                    new CategoryProfile()
+                });
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -28,7 +61,7 @@ namespace Medas.JwtAPP.Back
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

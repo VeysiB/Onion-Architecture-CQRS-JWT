@@ -2,9 +2,9 @@
 
 #nullable disable
 
-namespace Medas.JwtAPP.Back.Data.Migrations
+namespace Medas.JwtAPP.Back.Persistance.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class mig2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
